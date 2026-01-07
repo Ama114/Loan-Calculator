@@ -33,21 +33,7 @@ A professional, bank-grade loan calculator built with pure HTML, CSS, and JavaSc
 - **Reset Functionality** - One-click reset to default values
 - **Legal Disclaimer** - Professional disclaimer for financial estimates
 
-## 🚀 Quick Start
-
-### Option 1: Direct Use
-1. Download the `loan-calculator.html` file
-2. Open it directly in any web browser
-3. Start calculating loans immediately!
-
-### Option 2: Website Integration
-1. Copy the entire HTML file
-2. Upload to your web server
-3. Link to it from your website
-4. No additional setup required!
-
-### Option 3: Embed in Existing Page
-Extract the HTML structure, CSS styles, and JavaScript code to integrate into your existing website.
+ 
 
 ## 💻 Usage
 
@@ -94,15 +80,7 @@ N = Total number of months
 | Canadian Dollar | C$ | CAD |
 | Japanese Yen | ¥ | JPY |
 
-### Browser Compatibility
-
-- ✅ Chrome (latest)
-- ✅ Firefox (latest)
-- ✅ Safari (latest)
-- ✅ Edge (latest)
-- ✅ Opera (latest)
-- ✅ Mobile browsers (iOS Safari, Chrome Mobile)
-
+ 
 ## 📱 Responsive Design
 
 The calculator automatically adapts to different screen sizes:
@@ -122,25 +100,6 @@ The calculator uses CSS variables that can be easily modified:
 - Green: `#4caf50` (interest amounts)
 - Gray: Various shades for backgrounds and borders
 
-**To customize:** Search and replace color values in the `<style>` section.
-
-### Adding More Currencies
-
-Add new currency options in the currency dropdown:
-
-```html
-<option value="YOUR_SYMBOL">CURRENCY_NAME (SYMBOL)</option>
-```
-
-### Modifying Default Values
-
-Change the default values in the input fields:
-
-```html
-<input type="number" id="loanAmount" value="50000">  <!-- Default loan amount -->
-<input type="number" id="interestRate" value="7.5">  <!-- Default interest rate -->
-<input type="number" id="tenure" value="12">         <!-- Default tenure -->
-```
 
 ## 📊 Example Calculations
 
