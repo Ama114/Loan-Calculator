@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Loan Calculator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e3f2fd 0%, #ffffff 50%, #e8f5e9 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header-icon {
+            width: 64px;
+            height: 64px;
+            background: #1976d2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 32px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+            border: 1px solid #e0e0e0;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-title::before {
+            content: '💰';
+            margin-right: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .tooltip {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            background: #bbb;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            font-size: 12px;
+            line-height: 16px;
+            cursor: help;
+            margin-left: 6px;
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 12px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #1976d2;
+            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+        }
+
+        .tenure-input {
+            flex: 1;
+        }
+
+        .tenure-select {
+            width: 120px;
+        }
+
+        .reset-btn {
+            width: 100%;
+            padding: 14px;
+            background: #f5f5f5;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #555;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .reset-btn:hover {
+            background: #e0e0e0;
+        }
+
+        /* ADDED: Download Button Styles */
+        .download-btn {
+            width: 100%;
+            padding: 14px;
+            background: #2e7d32; /* Green color */
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .download-btn:hover {
+            background: #1b5e20;
+            transform: translateY(-1px);
+        }
+
+        .emi-card {
+            background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .emi-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .emi-amount {
+            font-size: 42px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .emi-subtitle {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e0e0e0;
+        }
+
+        .summary-label {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 6px;
+        }
+
+        .summary-amount {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .summary-amount.interest {
+            color: #4caf50;
+        }
+
+        .total-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e0e0e0;
+            margin-bottom: 20px;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e0e0e0;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .chart-canvas {
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .schedule-container {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e0e0e0;
+        }
+
+        .schedule-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .schedule-toggle {
+            font-size: 28px;
+            font-weight: 300;
+            color: #666;
+        }
+
+        .schedule-table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .schedule-table thead {
+            background: #f5f5f5;
+        }
+
+        .schedule-table th {
+            padding: 12px;
+            text-align: right;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .schedule-table th:first-child {
+            text-align: left;
+        }
+
+        .schedule-table td {
+            padding: 12px;
+            text-align: right;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .schedule-table td:first-child {
+            text-align: left;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .schedule-table tbody tr:hover {
+            background: #fafafa;
+        }
+
+        .table-wrapper {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .principal-color {
+            color: #1976d2;
+        }
+
+        .interest-color {
+            color: #4caf50;
+        }
+
+        .disclaimer {
+            background: #e3f2fd;
+            border: 1px solid #90caf9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .disclaimer-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .calculator-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .emi-amount {
+                font-size: 32px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-icon">🧮</div>
+            <h1>Loan Calculator</h1>
+            <p>Professional EMI & Loan Planning Tool</p>
+        </div>
+
+        <div class="calculator-grid">
+            <div class="card">
+                <div class="card-title">Loan Details</div>
+
+                <div class="form-group">
+                    <label class="form-label">Currency</label>
+                    <select id="currency">
+                        <option value="$">USD ($)</option>
+                        <option value="€">EUR (€)</option>
+                        <option value="£">GBP (£)</option>
+                        <option value="₹">INR (₹)</option>
+                        <option value="A$">AUD (A$)</option>
+                        <option value="C$">CAD (C$)</option>
+                        <option value="¥">JPY (¥)</option>
+                        <option value="Rs">LKR (Rs)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Loan Amount
+                        <span class="tooltip" title="The total amount you wish to borrow">ℹ</span>
+                    </label>
+                    <input type="number" id="loanAmount" value="50000" min="0" step="1000">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Interest Rate (% per year)
+                        <span class="tooltip" title="Annual interest rate charged by the lender">ℹ</span>
+                    </label>
+                    <input type="number" id="interestRate" value="7.5" min="0" step="0.1">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        Loan Tenure
+                        <span class="tooltip" title="Duration of the loan repayment period">ℹ</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="number" id="tenure" class="tenure-input" value="12" min="1">
+                        <select id="tenureUnit" class="tenure-select">
+                            <option value="months">Months</option>
+                            <option value="years" selected>Years</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="reset-btn" onclick="resetCalculator()">🔄 Reset Calculator</button>
+            </div>
+
+            <div>
+                <div id="resultsContainer" class="hidden">
+                    <div class="card emi-card">
+                        <div class="emi-label">📈 Monthly EMI</div>
+                        <div class="emi-amount" id="emiAmount">$0.00</div>
+                        <div class="emi-subtitle">Equated Monthly Installment</div>
+                    </div>
+
+                    <div class="summary-grid">
+                        <div class="summary-card">
+                            <div class="summary-label">Principal Amount</div>
+                            <div class="summary-amount" id="principalAmount">$0.00</div>
+                        </div>
+                        <div class="summary-card">
+                            <div class="summary-label">Total Interest</div>
+                            <div class="summary-amount interest" id="interestAmount">$0.00</div>
+                        </div>
+                    </div>
+
+                    <div class="total-card">
+                        <div class="summary-label">Total Amount Payable</div>
+                        <div class="summary-amount" style="font-size: 28px;" id="totalAmount">$0.00</div>
+                    </div>
+
+                    <button class="download-btn" onclick="downloadPDF()">
+                        📥 Download Detailed Report (PDF)
+                    </button>
+
+                    <div class="chart-container">
+                        <div class="chart-title">Payment Breakdown</div>
+                        <canvas id="pieChart" class="chart-canvas" width="300" height="300"></canvas>
+                    </div>
+
+                    <div class="schedule-container">
+                        <div class="schedule-header" onclick="toggleSchedule()">
+                            <div class="chart-title" style="margin: 0;">Repayment Schedule</div>
+                            <div class="schedule-toggle" id="scheduleToggle">+</div>
+                        </div>
+                        <div id="scheduleContent" class="hidden">
+                            <div class="table-wrapper">
+                                <table class="schedule-table" id="scheduleTableElement">
+                                    <thead>
+                                        <tr>
+                                            <th>Month</th>
+                                            <th>EMI</th>
+                                            <th>Principal</th>
+                                            <th>Interest</th>
+                                            <th>Balance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="scheduleBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="emptyState" class="card empty-state">
+                    <div class="empty-state-icon">🧮</div>
+                    <p>Enter valid loan details to calculate EMI</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="disclaimer">
+            <div class="disclaimer-title">Disclaimer:</div>
+            <p>This calculator provides estimates for informational purposes only. Actual loan terms may vary based on lender policies, credit score, and other factors. Please consult with a financial advisor or your bank for accurate loan terms and personalized advice.</p>
+        </div>
+    </div>
+
+    <script>
+        let currencySymbol = '$';
+
+        // Event Listeners
+        document.getElementById('currency').addEventListener('change', calculate);
+        document.getElementById('loanAmount').addEventListener('input', calculate);
+        document.getElementById('interestRate').addEventListener('input', calculate);
+        document.getElementById('tenure').addEventListener('input', calculate);
+        document.getElementById('tenureUnit').addEventListener('change', calculate);
+
+        function formatCurrency(amount) {
+            return `${currencySymbol}${amount.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            })}`;
+        }
+
+        function calculate() {
+            currencySymbol = document.getElementById('currency').value;
+            const principal = parseFloat(document.getElementById('loanAmount').value);
+            const rate = parseFloat(document.getElementById('interestRate').value);
+            const tenureValue = parseFloat(document.getElementById('tenure').value);
+            const tenureUnit = document.getElementById('tenureUnit').value;
+
+            const tenureInMonths = tenureUnit === 'years' ? tenureValue * 12 : tenureValue;
+
+            if (!principal || principal <= 0 || !rate || rate < 0 || !tenureInMonths || tenureInMonths <= 0) {
+                showEmptyState();
+                return;
+            }
+
+            // EMI Formula: [P x R x (1+R)^N] / [(1+R)^N-1]
+            const monthlyRate = rate / 12 / 100;
+            let emi;
+            
+            if (monthlyRate === 0) {
+                emi = principal / tenureInMonths;
+            } else {
+                emi = (principal * monthlyRate * Math.pow(1 + monthlyRate, tenureInMonths)) / 
+                      (Math.pow(1 + monthlyRate, tenureInMonths) - 1);
+            }
+
+            const totalAmount = emi * tenureInMonths;
+            const totalInterest = totalAmount - principal;
+
+            // Update UI
+            document.getElementById('emiAmount').textContent = formatCurrency(emi);
+            document.getElementById('principalAmount').textContent = formatCurrency(principal);
+            document.getElementById('interestAmount').textContent = formatCurrency(totalInterest);
+            document.getElementById('totalAmount').textContent = formatCurrency(totalAmount);
+
+            // Generate Schedule
+            generateSchedule(principal, emi, monthlyRate, tenureInMonths);
+
+            // Draw Chart
+            drawPieChart(principal, totalInterest);
+
+            // Show Results
+            document.getElementById('resultsContainer').classList.remove('hidden');
+            document.getElementById('emptyState').classList.add('hidden');
+        }
+
+        function generateSchedule(principal, emi, monthlyRate, tenureInMonths) {
+            let balance = principal;
+            const tbody = document.getElementById('scheduleBody');
+            tbody.innerHTML = '';
+
+            for (let month = 1; month <= tenureInMonths; month++) {
+                const interestPayment = balance * monthlyRate;
+                const principalPayment = emi - interestPayment;
+                balance -= principalPayment;
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${month}</td>
+                    <td>${formatCurrency(emi)}</td>
+                    <td class="principal-color">${formatCurrency(principalPayment)}</td>
+                    <td class="interest-color">${formatCurrency(interestPayment)}</td>
+                    <td>${formatCurrency(Math.max(0, balance))}</td>
+                `;
+                tbody.appendChild(row);
+            }
+        }
+
+        function drawPieChart(principal, interest) {
+            const canvas = document.getElementById('pieChart');
+            const ctx = canvas.getContext('2d');
+            const total = principal + interest;
+            const principalAngle = (principal / total) * 2 * Math.PI;
+
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = 100;
+
+            // Draw Principal
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + principalAngle);
+            ctx.closePath();
+            ctx.fillStyle = '#1976d2';
+            ctx.fill();
+
+            // Draw Interest
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.arc(centerX, centerY, radius, -Math.PI / 2 + principalAngle, -Math.PI / 2 + 2 * Math.PI);
+            ctx.closePath();
+            ctx.fillStyle = '#4caf50';
+            ctx.fill();
+
+            // Add labels
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'center';
+            
+            const principalPercent = ((principal / total) * 100).toFixed(1);
+            const interestPercent = ((interest / total) * 100).toFixed(1);
+
+            ctx.fillText(`Principal: ${principalPercent}%`, centerX, centerY + radius + 30);
+            ctx.fillText(`Interest: ${interestPercent}%`, centerX, centerY + radius + 50);
+        }
+
+        function toggleSchedule() {
+            const content = document.getElementById('scheduleContent');
+            const toggle = document.getElementById('scheduleToggle');
+            
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                toggle.textContent = '−';
+            } else {
+                content.classList.add('hidden');
+                toggle.textContent = '+';
+            }
+        }
+
+        function showEmptyState() {
+            document.getElementById('resultsContainer').classList.add('hidden');
+            document.getElementById('emptyState').classList.remove('hidden');
+        }
+
+        function resetCalculator() {
+            document.getElementById('currency').value = '$';
+            document.getElementById('loanAmount').value = '50000';
+            document.getElementById('interestRate').value = '7.5';
+            document.getElementById('tenure').value = '12';
+            document.getElementById('tenureUnit').value = 'years';
+            document.getElementById('scheduleContent').classList.add('hidden');
+            document.getElementById('scheduleToggle').textContent = '+';
+            calculate();
+        }
+
+        // --- NEW FUNCTION: DOWNLOAD PDF ---
+        async function downloadPDF() {
+            // Access jsPDF from window object
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // 1. Add Title
+            doc.setFontSize(22);
+            doc.setTextColor(25, 118, 210); // #1976d2
+            doc.text("Loan Repayment Report", 105, 20, null, null, "center");
+
+            // 2. Add Summary Details
+            const loanAmount = document.getElementById('principalAmount').textContent;
+            const totalInterest = document.getElementById('interestAmount').textContent;
+            const totalPayable = document.getElementById('totalAmount').textContent;
+            const monthlyEMI = document.getElementById('emiAmount').textContent;
+            
+            doc.setFontSize(12);
+            doc.setTextColor(60, 60, 60);
+            
+            // Draw a light background box for summary
+            doc.setFillColor(245, 245, 245);
+            doc.rect(14, 30, 182, 50, 'F');
+            
+            doc.setFont("helvetica", "bold");
+            doc.text("Summary", 20, 40);
+            
+            doc.setFont("helvetica", "normal");
+            doc.text(`Principal Loan Amount:`, 20, 50);
+            doc.text(loanAmount, 100, 50);
+            
+            doc.text(`Total Interest:`, 20, 60);
+            doc.setTextColor(76, 175, 80); // Green for interest
+            doc.text(totalInterest, 100, 60);
+            
+            doc.setTextColor(60, 60, 60);
+            doc.text(`Total Amount Payable:`, 20, 70);
+            doc.setFont("helvetica", "bold");
+            doc.text(totalPayable, 100, 70);
+
+            // Add Monthly EMI specifically
+            doc.setFontSize(14);
+            doc.setTextColor(25, 118, 210);
+            doc.text(`Monthly EMI: ${monthlyEMI}`, 130, 50);
+
+            // 3. Add the Chart Image
+            const canvas = document.getElementById('pieChart');
+            // Convert canvas to Data URL (image format)
+            const chartImg = canvas.toDataURL("image/png");
+            // Add image to PDF (x, y, width, height)
+            doc.addImage(chartImg, 'PNG', 60, 85, 90, 90);
+
+            // 4. Add the Schedule Table
+            doc.setFontSize(14);
+            doc.setTextColor(0, 0, 0);
+            doc.text("Amortization Schedule", 14, 190);
+
+            doc.autoTable({
+                html: '#scheduleTableElement',
+                startY: 195,
+                theme: 'grid',
+                headStyles: { fillColor: [25, 118, 210] }, // Blue header
+                styles: { fontSize: 10, cellPadding: 3 },
+                // Use the data from the HTML table
+            });
+
+            // 5. Save the PDF
+            doc.save("Loan_Repayment_Report.pdf");
+        }
+
+        // Initial calculation
+        calculate();
+    </script>
+</body>
+</html>
